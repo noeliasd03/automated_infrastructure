@@ -1,0 +1,4 @@
+- hosts: load_balancer
+  become: yes
+  roles:
+    - role: haproxy
