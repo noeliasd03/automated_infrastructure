@@ -1,4 +1,12 @@
-- hosts: load_balancer
-  become: yes
-  roles:
-    - role: haproxy
+- hosts: load-balancer
+  become: yes  
+  tasks:
+    - name: Actualizar lista de paquetes
+      apt:
+        update_cache: yes
+
+    - name: Instalar HAProxy
+      apt:
+        name: haproxy
+        state: present
+
