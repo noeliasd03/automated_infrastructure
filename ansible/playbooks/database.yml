@@ -1,0 +1,30 @@
+---
+- name: Configurar servidor de base de datos
+  hosts: all
+  become: yes
+  tasks:
+    - name: Instalar MySQL
+      apt:
+        name: mysql-server
+        state: present
+        update_cache: yes
+
+    - name: Habilitar MySQL
+      service:
+        name: mysql
+        enabled: yes
+
+    - name: Crear base de datos
+      mysql_db:
+        name: contactos
+        state: present
+
+    - name: Crear tabla usuarios
+      mysql_query:
+        login_db: contactos
+        query: |
+          CREATE TABLE IF NOT EXISTS usuarios (
+              id INT AUTO_INCREMENT PRIMARY KEY,
+              nombre VARCHAR(100) NOT NULL,
+              telefono VARCHAR(20) NOT NULL
+          );

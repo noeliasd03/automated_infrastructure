@@ -1,0 +1,60 @@
+---
+- name: Configurar servidor backend
+  hosts: all
+  become: yes
+  tasks:
+    - name: Instalar dependencias previas
+      apt:
+        name:
+          - curl
+          - software-properties-common
+        state: present
+        update_cache: yes
+
+    - name: Agregar NodeSource repository para Node.js 16.x
+      shell: |
+        curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+      args:
+        executable: /bin/bash
+
+    - name: Instalar Node.js y npm
+      apt:
+        name: nodejs
+        state: present
+        update_cache: yes
+
+    - name: Verificar la versión de Node.js
+      command: node --version
+      register: node_version
+      changed_when: false
+
+    - name: Verificar la versión de npm
+      command: npm --version
+      register: npm_version
+      changed_when: false
+
+    - name: Mostrar la versión de Node.js
+      debug:
+        msg: "Node.js version: {{ node_version.stdout }}"
+
+    - name: Mostrar la versión de npm
+      debug:
+        msg: "npm version: {{ npm_version.stdout }}"
+
+    - name: Copiar aplicación Node.js
+      copy:
+        src: ../files/app/
+        dest: /opt/app/
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Instalar dependencias de Node.js
+      command: npm install
+      args:
+        chdir: /opt/app/
+
+    - name: Iniciar aplicación Node.js
+      command: node app.js
+      args:
+        chdir: /opt/app/

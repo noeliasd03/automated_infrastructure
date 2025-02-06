@@ -1,0 +1,28 @@
+---
+- name: Configurar servidor frontend
+  hosts: all
+  become: yes
+  tasks:
+    - name: Instalar Nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+
+    - name: Habilitar Nginx
+      service:
+        name: nginx
+        enabled: yes
+
+    - name: Copiar archivo index.html
+      copy:
+        src: ../files/index.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Reiniciar Nginx
+      service:
+        name: nginx
+        state: restarted

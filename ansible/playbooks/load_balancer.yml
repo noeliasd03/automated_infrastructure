@@ -1,0 +1,27 @@
+- name: HAProxy in the Load Balancer
+  hosts: all  
+  become: yes
+  tasks:
+    - name: Install HAProxy
+      apt:
+        name: haproxy
+        state: present
+        update_cache: yes
+
+    - name: Enable HAProxy
+      service:
+        name: haproxy
+        enabled: yes
+
+    - name: Copy HAProxy configuration
+      template:
+        src: ../files/haproxy.cfg
+        dest: /etc/haproxy/haproxy.cfg
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Restart HAProxy service
+      service:
+        name: haproxy
+        state: restarted
